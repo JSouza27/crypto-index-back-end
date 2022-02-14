@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "test:mocha": "nyc --all --include models --include services --include controllers mocha test/unitary/*.js --exit",
     "lint": "eslint --no-inline-config --no-error-on-unmatched-pattern -c .eslintrc.json ."
@@ -12,12 +14,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.2",
     "dotenv": "^8.2.0",
-    "pg": "^8.7.3",
-    "pg-hstore": "^2.3.4",
-    "sequelize": "^6.16.1",
+    "express": "^4.17.2",
+    "mysql2": "^2.3.3",
     "nodemon": "^2.0.4",
+    "sequelize": "^6.16.1",
     "sequelize-cli": "^6.4.1"
   },
   "devDependencies": {
