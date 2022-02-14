@@ -4,13 +4,29 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "test:mocha": "nyc --all --include models --include services --include controllers mocha test/unitary/*.js --exit",
+    "lint": "eslint --no-inline-config --no-error-on-unmatched-pattern -c .eslintrc.json ."
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "express": "^4.17.2",
+    "dotenv": "^8.2.0",
+    "pg": "^8.7.3",
+    "pg-hstore": "^2.3.4",
     "sequelize": "^6.16.1",
+    "nodemon": "^2.0.4",
     "sequelize-cli": "^6.4.1"
+  },
+  "devDependencies": {
+    "chai": "^4.3.6",
+    "mocha": "^9.2.0",
+    "sinon": "^13.0.1",
+    "eslint-config-trybe-backend": "^1.0.3",
+    "eslint": "6.8.0",
+    "eslint-config-airbnb-base": "14.2.0",
+    "eslint-plugin-import": "2.22.1"
   }
 }
