@@ -2,11 +2,12 @@
   "name": "crypto-index-back-end",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "./src/api/server.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
+    "start": "node .",
+    "dev": "nodemon .",
     "test": "mocha ./tests/unitary/**/*$NAME*.test.js --exit",
+    "test:integration": "mocha ./tests/integration/*$NAME*.test.js --exit",
     "lint": "eslint --no-inline-config --no-error-on-unmatched-pattern -c .eslintrc.json ."
   },
   "keywords": [],
