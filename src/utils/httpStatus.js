@@ -1,15 +1,25 @@
 class HttpStatus {
   constructor() {
     this.ok = 200;
-    this.BadRequest = 400;
+    this.badRequest = 400;
+    this.unauthorized = 401;
+    this.notFound = 404;
   }
 
-  Ok() {
+  get Ok() {
     return this.ok;
   }
 
-  BadRequest() {
-    return this.BadRequest;
+  get BadRequest() {
+    return this.badRequest;
+  }
+
+  get Unauthorized() {
+    return this.unauthorized;
+  }
+
+  get NotFound() {
+    return this.notFound;
   }
 }
 
