@@ -1,7 +1,7 @@
 const HttpStatus = require('../utils/httpStatus');
 const service = require('../services/loginService');
 
-const loginUser = async (req, res) => {
+const loginUser = async (_req, res) => {
   try {
     const { code, notification } = service.loginUser();
     return res.status(code).json(notification);
