@@ -2,6 +2,7 @@
   "root": true,
   "extends": ["trybe-backend"],
   "rules": {
-    "sonarjs/no-duplicate-string": ["error", 5]
+    "sonarjs/no-duplicate-string": ["error", 5],
+    "dot-notation": ["error", { "allowPattern": "^[a-z]+(_[a-z]+)+$" }]
   }
 }
