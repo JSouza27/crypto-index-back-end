@@ -1,6 +1,7 @@
 const express = require('express');
 const login = require('../router/loginRouter');
 const exchange = require('../router/exchangeRoute');
+const { nonExistentRoute } = require('../middlewares/notFoundMiddleware');
 
 const app = express();
 
@@ -13,5 +14,6 @@ app.get('/api', (_req, res) => {
 
 app.use('/api', login);
 app.use('/api', exchange);
+app.use(nonExistentRoute);
 
 module.exports = app;
