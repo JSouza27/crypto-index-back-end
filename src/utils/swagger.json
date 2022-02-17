@@ -86,7 +86,7 @@
         }
       }
     },
-    "/cryto/btc": {
+    "/crypto/btc": {
       "get": {
         "summary": "Retorna a cotação de câmbio",
         "description": "Retorna um objeco com a cotação de câmbio em diferentes moedas",
