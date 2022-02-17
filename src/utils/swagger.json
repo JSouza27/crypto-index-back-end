@@ -230,6 +230,42 @@
         }
       }
     },
+    "/currencies": {
+      "get": {
+        "summary": "Retorna as cotações salvas na API",
+        "description": "Retorna as cotações salvas na API",
+        "tags": [
+          "currency"
+        ],
+        "security": [
+          {
+            "basicAuth": "[]"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retorna um objeto com as cotações",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#components/schemas/currencies/responses/ok"
+                },
+                "examples": {
+                  "response": {
+                    "value": {
+                      "BRL": "5.40",
+                      "EUR": "0.92",
+                      "CAD": "1.40"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/notFound": {
       "get": {
         "summary": "Retorna not found se entrar em um endpoint que não existe",
@@ -446,6 +482,24 @@
             "type": "object",
             "properties": {
               "message": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "currencies": {
+        "responses": {
+          "ok": {
+            "type": "object",
+            "properties": {
+              "BRL": {
+                "type": "string"
+              },
+              "EUR": {
+                "type": "string"
+              },
+              "CAD": {
                 "type": "string"
               }
             }

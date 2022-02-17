@@ -1,6 +1,6 @@
 const httpStatus = require('../utils/httpStatus');
 const cointDeskService = require('./coinDeskService');
-const { calculator, update } = require('../utils/currenciesAux');
+const { calculator, update, readingFile } = require('../utils/currenciesAux');
 
 const addCurrency = (code, rate, description, reateFloat) => {
   const newCurrency = {
@@ -41,4 +41,13 @@ const updateCurrency = async (obj) => {
   };
 };
 
-module.exports = { getExchangeRate, updateCurrency };
+const getCurrencies = async () => {
+  const currencies = await readingFile();
+
+  return {
+    code: httpStatus.ok,
+    notification: currencies,
+  };
+};
+
+module.exports = { getExchangeRate, updateCurrency, getCurrencies };

@@ -19,4 +19,13 @@ const updateCurrency = async (req, res) => {
   }
 };
 
-module.exports = { getExchangeRate, updateCurrency };
+const getCurrencies = async (req, res) => {
+  try {
+    const { code, notification } = await service.getCurrencies();
+    return res.status(code).json(notification);
+  } catch (e) {
+    return res.status(HttpStatus.internalServerError).json({ message: e });
+  }
+};
+
+module.exports = { getExchangeRate, updateCurrency, getCurrencies };
