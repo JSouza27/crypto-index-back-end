@@ -1,0 +1,464 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API para vizualização do preço do BitCoin em diferentes moedas",
+    "description": "Nessa API será possível vizualizar o preço do Bitcoin em deirentes moedas e cotações",
+    "contact": {
+      "name": "Jonathan de Souza",
+      "url": "https://portfolio-jsouza27.vercel.app/",
+      "email": "souzajonathan570@gmail.com"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3007/api",
+      "description": "API de test"
+    },
+    {
+      "url": "https://crypto-index-back-end.herokuapp.com/api",
+      "description": "API de produção"
+    }
+  ],
+  "paths": {
+    "/login": {
+      "post": {
+        "summary": "Login do usuário",
+        "description": "Faz o login na API",
+        "tags": [
+          "users"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#components/schemas/login/body"
+              },
+              "examples": {
+                "user": {
+                  "value": {
+                    "email": "email@email.com",
+                    "password": "135982"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Retorna o token do usuário",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#components/schemas/login/responses/ok"
+                },
+                "examples": {
+                  "response": {
+                    "value": {
+                      "token": "valor-do-token-aqui"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Quando é enviado dados inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#components/schemas/login/responses/badRequest"
+                },
+                "examples": {
+                  "response": {
+                    "value": {
+                      "message": "Campos inválidos"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cryto/btc": {
+      "get": {
+        "summary": "Retorna a cotação de câmbio",
+        "description": "Retorna um objeco com a cotação de câmbio em diferentes moedas",
+        "tags": [
+          "quote"
+        ],
+        "security": [
+          {
+            "basicAuth": "[]"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retorna um objeto com as cotações",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#components/schemas/quote/responses/ok"
+                },
+                "examples": {
+                  "response": {
+                    "value": {
+                      "time": {
+                        "updated": "Feb 17, 2022 14:43:00 UTC",
+                        "updatedISO": "2022-02-17T14:43:00+00:00",
+                        "updateduk": "Feb 17, 2022 at 14:43 GMT"
+                      },
+                      "disclaimer": "This data was produced from the CoinDesk Bitcoin Price Index (USD). Non-USD currency data converted using hourly conversion rate from openexchangerates.org",
+                      "bpi": {
+                        "USD": {
+                          "code": "USD",
+                          "rate": "42,204.4156",
+                          "description": "United States Dollar",
+                          "rate_float": 42204.4156
+                        },
+                        "BTC": {
+                          "code": "BTC",
+                          "rate": "1.0000",
+                          "description": "Bitcoin",
+                          "rate_float": 1
+                        },
+                        "BRL": {
+                          "code": "BRL",
+                          "rate": "211,022.078",
+                          "description": "Brazilian Real",
+                          "rate_float": 211022.078
+                        },
+                        "EUR": {
+                          "code": "EUR",
+                          "rate": "38,828.062",
+                          "description": "Euro",
+                          "rate_float": 38828.062352
+                        },
+                        "CAD": {
+                          "code": "CAD",
+                          "rate": "60,774.358",
+                          "description": "Canadian Dollar",
+                          "rate_float": 60774.358464
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Atualiza os valores das cotações BRL, EUR e CAD",
+        "description": "A requisição deve atualizar o valor de acordo com a moeda passada",
+        "tags": [
+          "quote"
+        ],
+        "security": [
+          {
+            "basicAuth": "[]"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#components/schemas/quote/updateBody"
+              },
+              "examples": {
+                "body": {
+                  "value": {
+                    "currency": "BRL",
+                    "value": 1000
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Retorna uma menssagem de sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#components/schemas/quote/responses/updateOk"
+                },
+                "examples": {
+                  "response": {
+                    "value": {
+                      "message": "Valor alterado com sucesso!"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Retorna uma menssagem de erro se passar uma moeda ou valor inválido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#components/schemas/quote/responses/invalidCurrency"
+                },
+                "examples": {
+                  "response - invalid currency": {
+                    "value": {
+                      "message": "Moeda inválida"
+                    }
+                  },
+                  "response - invalid value": {
+                    "value": {
+                      "message": "Valor inválido"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/notFound": {
+      "get": {
+        "summary": "Retorna not found se entrar em um endpoint que não existe",
+        "description": "Uma requisição para um endpoint que não exista deve retornar um código 404",
+        "tags": [
+          "app"
+        ],
+        "responses": {
+          "404": {
+            "description": "Uma requisição para um endpoint que não exista deve retornar um código 404",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#components/schemas/default"
+                },
+                "examples": {
+                  "response": {
+                    "value": {
+                      "message": "Endpoint não encontrado"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "default": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "login": {
+        "body": {
+          "type": "object",
+          "properties": {
+            "email": {
+              "type": "string"
+            },
+            "password": {
+              "type": "string"
+            }
+          }
+        },
+        "responses": {
+          "ok": {
+            "type": "object",
+            "properties": {
+              "token": {
+                "type": "string"
+              }
+            }
+          },
+          "badRequest": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "quote": {
+        "updateBody": {
+          "type": "object",
+          "required": [
+            "currency",
+            "value"
+          ],
+          "properties": {
+            "currency": {
+              "type": "string"
+            },
+            "value": {
+              "type": "interger",
+              "format": "int64"
+            }
+          }
+        },
+        "time": {
+          "type": "object",
+          "properties": {
+            "updated": {
+              "type": "string"
+            },
+            "updatedISO": {
+              "type": "string"
+            },
+            "updateduk": {
+              "type": "string"
+            }
+          }
+        },
+        "responses": {
+          "ok": {
+            "type": "object",
+            "properties": {
+              "time": {
+                "$ref": "#components/schemas/quote/time"
+              },
+              "disclaimer": {
+                "type": "string"
+              },
+              "bpi": {
+                "type": "object",
+                "properties": {
+                  "USD": {
+                    "type": "object",
+                    "properties": {
+                      "code": {
+                        "type": "string"
+                      },
+                      "rate": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "rate_float": {
+                        "type": "float"
+                      }
+                    }
+                  },
+                  "BTC": {
+                    "type": "object",
+                    "properties": {
+                      "code": {
+                        "type": "string"
+                      },
+                      "rate": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "rate_float": {
+                        "type": "float"
+                      }
+                    }
+                  },
+                  "BRL": {
+                    "type": "object",
+                    "properties": {
+                      "code": {
+                        "type": "string"
+                      },
+                      "rate": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "rate_float": {
+                        "type": "float"
+                      }
+                    }
+                  },
+                  "EUR": {
+                    "type": "object",
+                    "properties": {
+                      "code": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "rate": {
+                        "type": "string"
+                      },
+                      "rate_float": {
+                        "type": "float"
+                      }
+                    }
+                  },
+                  "CAD": {
+                    "type": "object",
+                    "properties": {
+                      "code": {
+                        "type": "string"
+                      },
+                      "rate": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "rate_float": {
+                        "type": "float"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "updateOk": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string"
+              }
+            }
+          },
+          "invalidCurrency": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "basicAuth": {
+        "type": "apiKey",
+        "name": "authorization",
+        "in": "header"
+      }
+    }
+  }
+}
