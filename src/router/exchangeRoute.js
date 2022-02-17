@@ -4,7 +4,7 @@ const { checkAuthorization, validateBody } = require('../middlewares/exchangeMid
 
 const router = express.Router();
 
-router.get('/cryto/btc', checkAuthorization, controller.getExchangeRate);
-router.post('/cryto/btc', checkAuthorization, validateBody, controller.updateCurrency);
+router.get('/crypto/btc', checkAuthorization, controller.getExchangeRate);
+router.post('/crypto/btc', checkAuthorization, validateBody, controller.updateCurrency);
 
 module.exports = router;
