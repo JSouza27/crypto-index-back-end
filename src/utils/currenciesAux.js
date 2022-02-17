@@ -1,5 +1,4 @@
 const fs = require('fs').promises;
-// const currencies = require('./currencies.json');
 
 const currenciesJson = 'currencies.json';
 
