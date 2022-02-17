@@ -27,7 +27,7 @@ const update = async (obj) => {
   const { currency, value } = obj;
   const currencies = await readingFile();
 
-  currencies[currency] = value;
+  currencies[currency] = parseFloat(value).toFixed(2);
   
   const jsonString = JSON.stringify(currencies);
 
