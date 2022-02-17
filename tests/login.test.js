@@ -14,7 +14,7 @@ describe('POST /api/login', () => {
     before(async () => {
       response = await chai.request(server)
         .post('/api/login')
-        .send({})
+        .send({});
     });
 
     it('retorna código de status 400', () => {
@@ -43,7 +43,7 @@ describe('POST /api/login', () => {
         .send({
           "email": "emailmail.com",
           "password": "1359820"
-        })
+        });
       });
 
     it('retorna código de status 400', () => {
@@ -72,7 +72,7 @@ describe('POST /api/login', () => {
         .send({
           "email": "email@mail.com",
           "password": "135982"
-        })
+        });
     });
       
     it('retorna código de status 400', () => {

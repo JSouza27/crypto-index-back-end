@@ -21,7 +21,7 @@ const validateBody = async (req, res, next) => {
     return res.status(HttpStatus.badRequest).json({ message: 'Moeda inválida' });
   }
 
-  if (value <= 0 || !Number.isInteger(value)) {
+  if (value <= 0 || typeof value !== 'number') {
     return res.status(HttpStatus.badRequest).json({ message: 'Valor inválido' });
   }
 

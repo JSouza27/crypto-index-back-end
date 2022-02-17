@@ -37,7 +37,7 @@ const updateCurrency = async (obj) => {
 
   return {
     code: httpStatus.ok,
-    notification: 'Valor alterado com sucesso!',
+    notification: { message: 'Valor alterado com sucesso!' },
   };
 };
 

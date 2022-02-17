@@ -1,281 +1,251 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-const HttpStatus = require('../src/utils/httpStatus');
 const server = require('../src/api/app');
+const HttpStatus = require('../src/utils/httpStatus');
+const { readingFile } = require('../src/utils/currenciesAux');
 
 chai.use(chaiHttp);
 
 const { expect } = chai;
-const status = new HttpStatus();
-
-describe('GET /api/', () => {
-  describe('Verifica se a "URL" base é "[porta]/api"', () => {
-    let response = {};
-
-    before(async () => {
-      response = await chai.request(server)
-        .get('/api');
-    });
-
-    it('Retorna status 200', () => {
-      expect(response).to.have.status(status.Ok);
-    });
-
-    it('Retorna um objeto', () => {
-      expect(response.body).to.be.a('object');
-    });
-
-    it('O objeto possui a propriedade "message"', () => {
-      expect(response.body).to.have.property('message');
-    });
-
-    it('A propriedade "message" possui o texto "Bem vindo a Crypto Index API!"', () => {
-      expect(response.body.message)
-          .to.be.equal('Bem vindo a Crypto Index API!');
-    });
-  });
-});
-
-describe('POST /api/login', () => {
-  describe('Testa login com email inválido', () => {
-    let response = {};
-
-    before(async () => {
-      response = await chai.request(server)
-        .post('/api/login')
-        .send({
-          email: 'mail.com',
-          password: '135982'
-        });
-    });
-
-    it('Retorna o status 400', () => {
-      expect(response).to.have.status(status.BadRequest);
-    });
-
-    it('Retorna um objeto', () => {
-      expect(response.body).to.have.property('object');
-    });
-
-    it('O objeto possui a propriedade "message"', () => {
-      expect(response.body).to.have.property('message');
-    });
-
-    it('Verifica se é possivel logar com email é inválido', () => {
-      expect(response.body.message)
-        .to.be.equal('Campos inválidos');
-    });
-  });
-
-  describe('Testa login com a senha inválida', () => {
-    let response = {};
-
-    before(async () => {
-      response = await chai.request(server)
-        .post('/api/login')
-        .send({
-          email: 'email@mail.com',
-          password: '123'
-        });
-    });
-
-    it('Retorna o status 400', () => {
-      expect(response).to.have.status(status.BadRequest);
-    });
-
-    it('Retorna um objeto', () => {
-      expect(response.body).to.have.property('object');
-    });
-
-    it('O objeto possui a propriedade "message"', () => {
-      expect(response.body).to.have.property('message');
-    });
-
-    it('Verifica se é possivel logar com email é inválido', () => {
-      expect(response.body.message)
-        .to.be.equal('Campos inválidos');
-    });
-  });
-
-  describe('Testa se é possivel fazer o login com sucesso ', () => {
-    let response = {};
-
-    it('Verifica login válido', () => {
-      expect(response).to.have.status(status.Ok);
-      expect(response.body).to.have.property('object');
-      expect(response.body).to.have.property('token');
-      expect(response.body.token).to.length(16);
-    });
-  });
-});
 
 describe('GET /api/cryto/btc', () => {
-  describe('retornar a cotação de câmbio', () => {
-    let response = {};
+  describe('Deve buscar as cotações', () => {
+    let response;
 
     before(async () => {
+      const authRequest = await chai.request(server)
+        .post('/api/login')
+        .send({
+          "email": "email@mail.com",
+          "password": "135982"
+        });
+
+      const token = authRequest.body.token;
+
       response = await chai.request(server)
-        .get('/api/cryto/btc');
+        .get('/api/cryto/btc')
+        .set('authorization', token);
     });
 
-    it('Retorna o status 200', () => {
-      expect(response).to.have.status(status.Ok);
+    it('retorna código de status 200', () => {
+      expect(response).to.have.status(HttpStatus.ok);
     });
 
-    it('Retorna um objeto', () => {
-      expect(response.body).to.have.property('object');
+    it('retorna um objeto', () => {
+      expect(response.body).to.be.an('object');
     });
 
-    it('O objeto deve conter as propriedades "BR", "EUR" e "CAD"', () => {
-      expect(response.body).to.have.property('BR');
-      expect(response.body).to.have.property('EUR');
-      expect(response.body).to.have.property('CAD');
+    it('o objeto de resposta possui as propriedades "USD", "BRL", "EUR" e "CAD"', () => {
+      expect(response.body.bpi).to.have.property('USD');
+      expect(response.body.bpi).to.have.property('BRL');
+      expect(response.body.bpi).to.have.property('EUR');
+      expect(response.body.bpi).to.have.property('CAD');
+      expect(response.body.bpi).to.have.property('BTC');
+    });
+
+    it('as propriedades "BRL", "EUR" e "CAD" devem ter a chave rate do tipo string', () => {
+      expect(response.body.bpi.BRL.rate).to.be.a('string');
+      expect(response.body.bpi.EUR.rate).to.be.a('string');
+      expect(response.body.bpi.CAD.rate).to.be.a('string');
+    });
+
+    it('as propriedades "BRL", "EUR" e "CAD" devem ter a chave rate_float do tipo float', () => {
+      expect(response.body.bpi.BRL['rate_float']).to.be.a('number');
+      expect(response.body.bpi.EUR['rate_float']).to.be.a('number');
+      expect(response.body.bpi.CAD['rate_float']).to.be.a('number');
     });
   });
 });
 
 describe('POST /api/crypto/btc', () => {
-  describe('Deve atualizar o valor da cotação', () => {
-    let response = {};
+  describe('Deve ser possível atualizar o valor da cotação da moeda no arquivo "currencies.json"', () =>{
+    let response;
+    let currencies;
 
     before(async () => {
-      response = await chai.request(server)
-        .post('/api/crypto/btc')
+      currencies = await readingFile();
+
+      const authRequest = await chai.request(server)
+        .post('/api/login')
         .send({
-          currency: 'BRL',
-          value: 10000.0
+          "email": "email@mail.com",
+          "password": "135982"
+        });
+
+      const token = authRequest.body.token;
+
+      response = await chai.request(server)
+        .post('/api/cryto/btc')
+        .set('authorization', token)
+        .send({
+          "currency": "BRL",
+          "value": 10
         });
     });
 
-    it('Retorna o status 200', () => {
-      expect(response).to.have.status(status.Ok);
+    it('retorna código de status 200', () => {
+      expect(response).to.have.status(HttpStatus.ok);
     });
-    
-    it('Retorna um objeto', () => {
-      expect(response.body).to.have.property('object');
+
+    it('retorna um objeto', () => {
+      expect(response.body).to.be.an('object');
     });
-    
-    it('O objeto possui a propriedade "message"', () => {
+
+    it('o objeto de resposta possui a propriedade "message"', () => {
       expect(response.body).to.have.property('message');
     });
-    
-    it('Verifica se o valor foi atualizado com sucesso', () => {
-      expect(response.body.message)
-        .to.be.equal('Valor alterado com sucesso!');
+
+    it('a propriedade "message" tem o valor "Valor alterado com sucesso!"', () => {
+      expect(response.body.message).to.be.equals('Valor alterado com sucesso!');
+    });
+
+    it('o arquivo "currencies.json" deve ter sido atualizado', () => {
+      expect(currencies.BRL).to.equal(10);
     });
   });
 
-  describe('Caso o valor do currency passado para atualização seja inválido', () => {
-    let response = {};
+  describe('Quando é passado o "currency" inválido', () => {
+    let response;
 
     before(async () => {
-      response = await chai.request(server)
-        .post('/api/crypto/btc')
+      const authRequest = await chai.request(server)
+        .post('/api/login')
         .send({
-          currency: 'JPY',
-          value: 1000.0
+          "email": "email@mail.com",
+          "password": "135982"
+        });
+
+      const token = authRequest.body.token;
+
+      response = await chai.request(server)
+        .post('/api/cryto/btc')
+        .set('authorization', token)
+        .send({
+          "currency": "JPY",
+          "value": 10
         });
     });
 
-    it('Retorna o status 400', () => {
-      expect(response).to.have.status(status.BadRequest);
+    it('retorna código de status 400', () => {
+      expect(response).to.have.status(HttpStatus.badRequest);
     });
-    
-    it('Retorna um objeto', () => {
-      expect(response.body).to.have.property('object');
+
+    it('retorna um objeto', () => {
+      expect(response.body).to.be.an('object');
     });
-    
-    it('O objeto possui a propriedade "message"', () => {
+
+    it('o objeto de resposta possui a propriedade "message"', () => {
       expect(response.body).to.have.property('message');
     });
-    
-    it('Verifica se retorna a menssagem "Moeda inválida" quando passado o currency incorreto', () => {
-      expect(response.body.message)
-        .to.be.equal('Moeda inválida');
+
+    it('a propriedade "message" tem o valor "Moeda inválida"', () => {
+      expect(response.body.message).to.be.equals('Moeda inválida');
     });
   });
 
-  describe('Caso o value passado para atualização seja inválido', () => {
-    let response = {};
+  describe('Quando é passado o "value" inválido', () => {
+    let response;
 
     before(async () => {
-      response = await chai.request(server)
-        .post('/api/crypto/btc')
+      const authRequest = await chai.request(server)
+        .post('/api/login')
         .send({
-          currency: 'BRL',
-          value: 0
+          "email": "email@mail.com",
+          "password": "135982"
+        });
+
+      const token = authRequest.body.token;
+
+      response = await chai.request(server)
+        .post('/api/cryto/btc')
+        .set('authorization', token)
+        .send({
+          "currency": "CAD",
+          "value": 0
         });
     });
 
-    it('Retorna o status 400', () => {
-      expect(response).to.have.status(status.BadRequest);
+    it('retorna código de status 400', () => {
+      expect(response).to.have.status(HttpStatus.badRequest);
     });
-    
-    it('Retorna um objeto', () => {
-      expect(response.body).to.have.property('object');
+
+    it('retorna um objeto', () => {
+      expect(response.body).to.be.an('object');
     });
-    
-    it('O objeto possui a propriedade "message"', () => {
+
+    it('o objeto de resposta possui a propriedade "message"', () => {
       expect(response.body).to.have.property('message');
     });
-    
-    it('Verifica se retorna a menssagem "Valor inválido" quando passado o currency incorreto', () => {
-      expect(response.body.message)
-        .to.be.equal('Valor inválido');
+
+    it('a propriedade "message" tem o valor "Valor inválido"', () => {
+      expect(response.body.message).to.be.equals('Valor inválido');
     });
   });
 
-  describe('Deve conter um token para no cabeçalho para acessar a rota', () => {
-    let response = {};
+  describe('Quando é feita a requisição sem token', () => {
+    let response;
 
     before(async () => {
       response = await chai.request(server)
-        .post('/api/crypto/btc')
+        .post('/api/cryto/btc')
+        .set('authorization', '')
         .send({
-          currency: 'BRL',
-          value: 1000.0
+          "currency": "CAD",
+          "value": 40
         });
     });
 
-    it('Retorna o status 401', () => {
-      expect(response).to.have.status(status.Unauthorized);
+    it('retorna código de status 401', () => {
+      expect(response).to.have.status(HttpStatus.unauthorized);
     });
-    
-    it('Retorna um objeto', () => {
-      expect(response.body).to.have.property('object');
+
+    it('retorna um objeto', () => {
+      expect(response.body).to.be.an('object');
     });
-    
-    it('O objeto possui a propriedade "message"', () => {
+
+    it('o objeto de resposta possui a propriedade "message"', () => {
       expect(response.body).to.have.property('message');
     });
-    
-    it('Verifica se retorna a menssagem "Token inválido"', () => {
-      expect(response.body.message)
-        .to.be.equal('Token inválido');
+
+    it('a propriedade "message" tem o valor "Token inválido"', () => {
+      expect(response.body.message).to.be.equals('Token inválido');
     });
   });
-  
 });
 
-describe('Requisição para um endpoint que não exista', () => {
-  describe('Deve retornar código 404', () => {
-    let response = {};
+describe('GET /rote-inexistente', () => {
+  describe('Quando feita uma requisição para uma rota que não existe', () => {
+    let response;
 
-    it('Retorna o status 404', () => {
-      expect(response).to.have.status(status.NotFound);
+    before(async () => {
+      const authRequest = await chai.request(server)
+        .post('/api/login')
+        .send({
+          "email": "email@mail.com",
+          "password": "135982"
+        });
+
+      const token = authRequest.body.token;
+
+      response = await chai.request(server)
+        .get('/rote-inexistente')
+        .set('authorization', token);
     });
-    
-    it('Retorna um objeto', () => {
-      expect(response.body).to.have.property('object');
+
+    it('retorna código de status 404', () => {
+      expect(response).to.have.status(HttpStatus.notFound);
     });
-    
-    it('O objeto possui a propriedade "message"', () => {
+
+    it('retorna um objeto', () => {
+      expect(response.body).to.be.an('object');
+    });
+
+    it('o objeto de resposta possui a propriedade "message"', () => {
       expect(response.body).to.have.property('message');
     });
-    
-    it('Verifica se retorna a menssagem "Endpoint não encontrado"', () => {
-      expect(response.body.message)
-        .to.be.equal('Endpoint não encontrado');
+
+    it('a propriedade "message" tem o valor "Endpoint não encontrado"', () => {
+      expect(response.body.message).to.be.equals('Endpoint não encontrado');
     });
   });
 });
