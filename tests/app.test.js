@@ -8,7 +8,7 @@ chai.use(chaiHttp);
 
 const { expect } = chai;
 
-describe('GET /api/cryto/btc', () => {
+describe('GET /api/crypto/btc', () => {
   describe('Deve buscar as cotações', () => {
     let response;
 
@@ -23,7 +23,7 @@ describe('GET /api/cryto/btc', () => {
       const token = authRequest.body.token;
 
       response = await chai.request(server)
-        .get('/api/cryto/btc')
+        .get('/api/crypto/btc')
         .set('authorization', token);
     });
 
@@ -75,7 +75,7 @@ describe('POST /api/crypto/btc', () => {
       const token = authRequest.body.token;
 
       response = await chai.request(server)
-        .post('/api/cryto/btc')
+        .post('/api/crypto/btc')
         .set('authorization', token)
         .send({
           "currency": "BRL",
@@ -118,7 +118,7 @@ describe('POST /api/crypto/btc', () => {
       const token = authRequest.body.token;
 
       response = await chai.request(server)
-        .post('/api/cryto/btc')
+        .post('/api/crypto/btc')
         .set('authorization', token)
         .send({
           "currency": "JPY",
@@ -157,7 +157,7 @@ describe('POST /api/crypto/btc', () => {
       const token = authRequest.body.token;
 
       response = await chai.request(server)
-        .post('/api/cryto/btc')
+        .post('/api/crypto/btc')
         .set('authorization', token)
         .send({
           "currency": "CAD",
@@ -187,7 +187,7 @@ describe('POST /api/crypto/btc', () => {
 
     before(async () => {
       response = await chai.request(server)
-        .post('/api/cryto/btc')
+        .post('/api/crypto/btc')
         .set('authorization', '')
         .send({
           "currency": "CAD",
