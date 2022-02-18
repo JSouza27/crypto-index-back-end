@@ -11,6 +11,9 @@ Você pode acessar o repositório do front-end por aqui: [crypto-index-front-end
 ou se desejar ver a aplicação rodando no seu navegador ou smartphone
 acesse esse link: [Crypto Index](https://crypto-index-front-end.vercel.app/login).
 
+** O deploy dessa API foi feita no Heroku então que ela demore um pouco a responder ou retorne um erro quando acessada
+a primeira vez. Se isso aconter, basta acessar a aplicação novamente.
+
 
 ### Stack utilizada
 
@@ -21,6 +24,8 @@ acesse esse link: [Crypto Index](https://crypto-index-front-end.vercel.app/login
 - [Chai js](https://www.chaijs.com/)
 - [Chai-Http](https://www.chaijs.com/plugins/chai-http/)
 - [ESLint](https://eslint.org/)
+- [Heroku](https://www.heroku.com)
+
 
 ---
 
