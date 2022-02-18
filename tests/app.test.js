@@ -3,6 +3,8 @@ const chaiHttp = require('chai-http');
 const server = require('../src/api/app');
 const HttpStatus = require('../src/utils/httpStatus');
 const { readingFile } = require('../src/utils/currenciesAux');
+const sinon = require('sinon');
+const fs = require('fs').promises;
 
 chai.use(chaiHttp);
 
@@ -58,12 +60,15 @@ describe('GET /api/crypto/btc', () => {
 });
 
 describe('POST /api/crypto/btc', () => {
+  const FILE_CONTENT = {
+    BRL: 6,
+  };
+
   describe('Deve ser possível atualizar o valor da cotação da moeda no arquivo "currencies.json"', () =>{
     let response;
-    let currencies;
 
-    before(async () => {
-      currencies = await readingFile();
+    before(async() => {
+      // sinon.stub(fs, 'readFile').resolves(FILE_CONTENT);
 
       const authRequest = await chai.request(server)
         .post('/api/login')
@@ -79,9 +84,13 @@ describe('POST /api/crypto/btc', () => {
         .set('authorization', token)
         .send({
           "currency": "BRL",
-          "value": 10
+          "value": 6
         });
     });
+
+    // after(() => {
+    //   fs.readFile.restore();
+    // });
 
     it('retorna código de status 200', () => {
       expect(response).to.have.status(HttpStatus.ok);
@@ -99,8 +108,10 @@ describe('POST /api/crypto/btc', () => {
       expect(response.body.message).to.be.equals('Valor alterado com sucesso!');
     });
 
-    it('o arquivo "currencies.json" deve ter sido atualizado', () => {
-      expect(currencies.BRL).to.equal(10);
+    it('o arquivo "currencies.json" deve ter sido atualizado',async () => {
+      const currencies = await readingFile();
+
+      expect(currencies.BRL).to.equal('6.00');
     });
   });
 
