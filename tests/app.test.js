@@ -68,7 +68,6 @@ describe('POST /api/crypto/btc', () => {
     let response;
 
     before(async() => {
-      // sinon.stub(fs, 'readFile').resolves(FILE_CONTENT);
 
       const authRequest = await chai.request(server)
         .post('/api/login')
@@ -87,10 +86,6 @@ describe('POST /api/crypto/btc', () => {
           "value": 6
         });
     });
-
-    // after(() => {
-    //   fs.readFile.restore();
-    // });
 
     it('retorna código de status 200', () => {
       expect(response).to.have.status(HttpStatus.ok);
@@ -220,6 +215,65 @@ describe('POST /api/crypto/btc', () => {
 
     it('a propriedade "message" tem o valor "Token inválido"', () => {
       expect(response.body.message).to.be.equals('Token inválido');
+    });
+  });
+});
+
+describe('GET /currencies', () => {
+  describe('Deve ser possível retornar a cotação das moedas salvas', async() => {
+    let response;
+    const currencies = await readingFile();
+
+    before(async() => {
+
+      const authRequest = await chai.request(server)
+        .post('/api/login')
+        .send({
+          "email": "email@mail.com",
+          "password": "135982"
+        });
+
+      const token = authRequest.body.token;
+
+      response = await chai.request(server)
+        .get('/api/currencies')
+        .set('authorization', token);
+    });
+
+    it('retorna código de status 200', () => {
+      expect(response).to.have.status(HttpStatus.ok);
+    });
+
+    it('retorna um objeto', () => {
+      expect(response.body).to.be.an('object');
+    });
+
+    it('retorna um objeto', () => {
+      expect(response.body).to.be.an('object');
+    });
+
+    it('o objeto deve conter as cotações das moedas', () => {
+      expect(response.body).to.equal(currencies);
+    });
+  });
+
+  describe('Retorna status 500 caso exista algum erro', async() => {
+    let response;
+
+    before(async() => {
+
+      const authRequest = await chai.request(server)
+        .post('/api/login')
+        .send({
+          "email": "email@mail.com",
+          "password": "135982"
+        });
+
+      const token = authRequest.body.token;
+
+      response = await chai.request(server)
+        .get('/api/currencies')
+        .set('authorization', token);
     });
   });
 });
