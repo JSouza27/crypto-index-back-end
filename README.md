@@ -2,9 +2,9 @@
 
 ## Boas vindas ao repositório do Projeto - Crypto Index
 
-Esse é um projeto full-stack onde o uuário poderá ter acesso
+Esse é um projeto full-stack onde o usuário poderá ter acesso
 ao preços do Bitcoin em diferentes moedas.
-Essa é a parte do back-end ou seja a API e vocÊ pode acessar a Documentação
+Essa é a parte do back-end ou seja a API e você pode acessar a Documentação
 dela por aqui: [Crypto Index - Doc](https://crypto-index-back-end.herokuapp.com/api/docs/).
 
 Você pode acessar o repositório do front-end por aqui: [crypto-index-front-end](https://github.com/JSouza27/crypto-index-front-end)
@@ -118,3 +118,23 @@ e no terminal digitar o comando abaixo.
 ```bash
   NAME=**nome do arquivo** npm test
 ```
+ou
+
+```bash
+  npm test
+```
+
+8. Caso queira rodar os teste de integração
+
+```bash
+  npm run test:coverage
+```
+
+## Autores
+
+- [@JSouza27](https://github.com/JSouza27)
+
+
+## Deploy
+
+Deploy feito no [Heroku](https://www.heroku.com)
