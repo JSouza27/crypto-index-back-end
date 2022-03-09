@@ -11,9 +11,11 @@ Você pode acessar o repositório do front-end por aqui: [crypto-index-front-end
 ou se desejar ver a aplicação rodando no seu navegador ou smartphone
 acesse esse link: [Crypto Index](https://crypto-index-front-end.vercel.app/login).
 
-** O deploy dessa API foi feita no Heroku então que ela demore um pouco a responder ou retorne um erro quando acessada
+**O deploy dessa API foi feita no Heroku então que ela demore um pouco a responder ou retorne um erro quando acessada
 a primeira vez. Se isso aconter, basta acessar a aplicação novamente.
 
+**A versão do Node utilizada nesse projeto foi a 14.19.0, então verifique a versão do Node antes de executar na sua maquina
+com o comando no terminal `node -v`
 
 ### Stack utilizada
 
